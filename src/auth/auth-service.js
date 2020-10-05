@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config');
+const { JWT_SECRET } = require('../../config');
 
 const AuthService = {
   registerUser(db, newUser) {
@@ -12,13 +12,13 @@ const AuthService = {
       });
   },
   getUserWithUserName(db, user_name) {
-    return db('thingful_users').where({ user_name }).first();
+    return db('users').where({ user_name }).first();
   },
   comparePasswords(password, hash) {
     return bcrypt.compare(password, hash);
   },
   createJwt(subject, payload) {
-    return jwt.sign(payload, config.JWT_SECRET, {
+    return jwt.sign(payload, JWT_SECRET, {
       subject,
       algorithm: 'HS256',
     });
