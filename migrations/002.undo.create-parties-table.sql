@@ -1,1 +1,1 @@
-DROP TABLE parties;
+DROP TABLE if exists parties;
