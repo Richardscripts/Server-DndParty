@@ -5,6 +5,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('../config');
 const authRouter = require('./auth/auth-router');
+const partiesRouter = require('./parties/parties-route');
+
 const app = express();
 
 const morganOption = NODE_ENV === 'production' ? 'tiny' : 'common';
@@ -13,9 +15,8 @@ app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
 
-app.use(helmet());
-
 app.use('/auth', authRouter);
+app.use('/parties', partiesRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;
@@ -27,7 +28,5 @@ app.use(function errorHandler(error, req, res, next) {
   }
   res.status(500).json(response);
 });
-
-module.exports = app;
 
 module.exports = app;
