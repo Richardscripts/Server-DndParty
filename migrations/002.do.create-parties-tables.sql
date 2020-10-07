@@ -15,5 +15,6 @@ CREATE TABLE parties (
   campaign_or_custom TEXT,
   auto_accepts TEXT,
   banned_books TEXT,
-  date_created TIMESTAMPTZ DEFAULT now() NOT NULL
+  date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
+  user_id_creator int references users (user_id) NOT NULL
 );

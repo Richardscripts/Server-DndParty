@@ -25,6 +25,7 @@ partiesRouter
       about,
       language,
       online_or_not,
+      user_id_creator: req.user.user_id,
     };
     if (!party_name) {
       return res.status(400).json({ error: 'Missing Party Name' });
@@ -45,6 +46,38 @@ partiesRouter
   })
   .get((req, res, next) => {
     PartiesService.getAllPartiesFromDB(req.app.get('db'))
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch(next);
+  });
+
+partiesRouter.route('/:party_id').get((req, res, next) => {
+  const party_id = req.params.party_id;
+  PartiesService.getIndividualPartyFromDB(req.app.get('db'), party_id)
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch(next);
+});
+partiesRouter
+  .route('/join')
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    const newRequest = {
+      user_id: req.user.user_id,
+      party_id: req.body.party_id,
+    };
+    PartiesService.createPartyRequest(req.app.get('db'), newRequest)
+      .then((result) => {
+        return res.status(201).send(result);
+      })
+      .catch(next);
+  });
+
+partiesRouter
+  .route('/requests')
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    PartiesService.getAllPartyRequests(req.app.get('db'), req.body.party_id)
       .then((result) => {
         return res.json(result);
       })

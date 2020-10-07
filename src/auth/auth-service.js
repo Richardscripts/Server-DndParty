@@ -14,6 +14,9 @@ const AuthService = {
   getUserEmail(db, user_email) {
     return db('users').where({ user_email }).first();
   },
+  getUsername(db, user_name) {
+    return db('users').where({ user_name }).first();
+  },
   comparePasswords(password, hash) {
     return bcrypt.compare(password, hash);
   },

@@ -1,6 +1,6 @@
 CREATE TABLE users (
   user_id INTEGER PRIMARY KEY GENERATED Always AS IDENTITY,
-  user_name TEXT,
+  user_name TEXT NOT NULL,
   password TEXT NOT NULL,
   user_email TEXT NOT NULL,
   first_name TEXT,
