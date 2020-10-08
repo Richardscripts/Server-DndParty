@@ -86,6 +86,17 @@ partiesRouter
   });
 
 partiesRouter
+  .route('/joined/:user_id')
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    const user_id = req.params.user_id;
+    PartiesService.getUserJoinedParty(req.app.get('db'), user_id).then(
+      (result) => {
+        return res.json(result);
+      }
+    );
+  });
+
+partiesRouter
   .route('/accept_request')
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
     const requester = {

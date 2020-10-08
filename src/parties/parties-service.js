@@ -33,6 +33,17 @@ const PartiesService = {
       })
       .where({ 'partyusers.party_id': party_id });
   },
+  getUserJoinedParty(db, user_id) {
+    return db('parties')
+      .select('parties.party_name')
+      .join('partyusers', function () {
+        this.on('parties.party_id', '=', 'partyusers.party_id');
+      })
+      .where({ 'partyusers.user_id': user_id })
+      .then((res) => {
+        return res;
+      });
+  },
   createPartyRequest(db, newRequest) {
     return db('partyrequests')
       .insert(newRequest)
