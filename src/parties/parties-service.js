@@ -17,7 +17,14 @@ const PartiesService = {
       .join('users', function () {
         this.on('parties.user_id_creator', '=', 'users.user_id');
       })
-      .where({ 'parties.party_id': party_id });
+      .where({ 'parties.party_id': party_id })
+      .then((res) => {
+        delete res[0].password;
+        delete res[0].user_email;
+        delete res[0].user_id;
+        delete res[0].user_id_creator;
+        return res;
+      });
   },
 
   createPartyRequest(db, newRequest) {
