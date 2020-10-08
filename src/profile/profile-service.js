@@ -10,6 +10,19 @@ const ProfileService = {
         return res;
       });
   },
+  getUserCreatedTablesFromDB(db, id) {
+    return (
+      db('parties')
+        .select('*')
+        // .join('partyrequests', function () {
+        //   this.on('parties.party_id', '=', 'partyrequests.user_id');
+        // })
+        .where({ 'parties.user_id_creator': id })
+        .then((res) => {
+          return res;
+        })
+    );
+  },
 };
 
 module.exports = ProfileService;

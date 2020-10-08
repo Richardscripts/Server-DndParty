@@ -75,6 +75,31 @@ partiesRouter
   });
 
 partiesRouter
+  .route('/joined')
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    const party_id = req.body.party_id;
+    PartiesService.getJoinedParty(req.app.get('db'), party_id).then(
+      (result) => {
+        return res.json(result);
+      }
+    );
+  });
+
+partiesRouter
+  .route('/accept_request')
+  .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    const requester = {
+      user_id: req.body.user_id,
+      party_id: req.body.party_id,
+    };
+    PartiesService.acceptUserToParty(req.app.get('db'), requester)
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch(next);
+  });
+
+partiesRouter
   .route('/requests')
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
     PartiesService.getAllPartyRequests(req.app.get('db'), req.body.party_id)

@@ -22,11 +22,17 @@ const PartiesService = {
         delete res[0].password;
         delete res[0].user_email;
         delete res[0].user_id;
-        delete res[0].user_id_creator;
         return res;
       });
   },
-
+  getJoinedParty(db, party_id) {
+    return db('partyusers')
+      .select('user_name')
+      .join('users', function () {
+        this.on('users.user_id', '=', 'partyusers.user_id');
+      })
+      .where({ 'partyusers.party_id': party_id });
+  },
   createPartyRequest(db, newRequest) {
     return db('partyrequests')
       .insert(newRequest)
@@ -34,11 +40,30 @@ const PartiesService = {
   },
   getAllPartyRequests(db, party_id) {
     return db('users')
-      .select('user_name')
+      .select('user_name', 'users.user_id')
       .join('partyrequests', function () {
         this.on('users.user_id', '=', 'partyrequests.user_id');
       })
       .where({ 'partyrequests.party_id': party_id });
+  },
+  updatePartyusersTable(db, newUserParty) {
+    return db('partyusers').insert(newUserParty);
+  },
+  updatePartycreatorsTable(db, newCreator) {
+    return db('partycreators').insert(newCreator);
+  },
+  acceptUserToParty(db, requesterToJoin) {
+    return db('partyrequests')
+      .where(requesterToJoin)
+      .del()
+      .then(() => {
+        return db('partyusers')
+          .insert(requesterToJoin)
+          .returning('*')
+          .then((res) => {
+            return res;
+          });
+      });
   },
 };
 
