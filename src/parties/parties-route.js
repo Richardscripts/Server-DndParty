@@ -11,20 +11,32 @@ partiesRouter
     let {
       party_name,
       players_needed,
-      dm_needed,
       dnd_edition,
       about,
       language,
       online_or_not,
+      homebrew_rules,
+      time_of_event,
+      classes_needed,
+      group_personality,
+      campaign_or_custom,
+      dm_needed,
+      camera_required,
     } = req.body;
     let newParty = {
       party_name,
       players_needed,
-      dm_needed,
       dnd_edition,
       about,
       language,
       online_or_not,
+      homebrew_rules,
+      time_of_event,
+      classes_needed,
+      group_personality,
+      campaign_or_custom,
+      dm_needed,
+      camera_required,
       user_id_creator: req.user.user_id,
     };
     if (!party_name) {
@@ -60,6 +72,7 @@ partiesRouter.route('/:party_id').get((req, res, next) => {
     })
     .catch(next);
 });
+
 partiesRouter
   .route('/join')
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
@@ -67,18 +80,34 @@ partiesRouter
       user_id: req.user.user_id,
       party_id: req.body.party_id,
     };
-    PartiesService.createPartyRequest(req.app.get('db'), newRequest)
-      .then((result) => {
-        return res.status(201).send(result);
-      })
-      .catch(next);
+    PartiesService.checkPartyRequest(req.app.get('db'), newRequest).then(
+      (alreadyRequested) => {
+        if (!alreadyRequested) {
+          PartiesService.checkPartyJoined(req.app.get('db'), newRequest).then(
+            (alreadyJoined) => {
+              if (!alreadyJoined) {
+                PartiesService.createPartyRequest(req.app.get('db'), newRequest)
+                  .then((result) => {
+                    return res.status(201).send(result);
+                  })
+                  .catch(next);
+              } else {
+                return res.end();
+              }
+            }
+          );
+        } else {
+          return res.end();
+        }
+      }
+    );
   });
 
 partiesRouter
   .route('/joined')
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
     const party_id = req.body.party_id;
-    PartiesService.getJoinedParty(req.app.get('db'), party_id).then(
+    PartiesService.getUsersJoinedParty(req.app.get('db'), party_id).then(
       (result) => {
         return res.json(result);
       }
@@ -99,15 +128,29 @@ partiesRouter
 partiesRouter
   .route('/accept_request')
   .post(requireAuth, jsonBodyParser, (req, res, next) => {
+    const type = req.body.type;
     const requester = {
       user_id: req.body.user_id,
       party_id: req.body.party_id,
     };
-    PartiesService.acceptUserToParty(req.app.get('db'), requester)
-      .then((result) => {
-        return res.json(result);
-      })
-      .catch(next);
+    if (type === 'player') {
+      PartiesService.acceptUserToParty(req.app.get('db'), requester, type)
+        .then(() => {
+          PartiesService.decreasePlayersNeeded(
+            req.app.get('db'),
+            requester.party_id
+          ).then((result) => {
+            return res.json(result);
+          });
+        })
+        .catch(next);
+    } else if (type === 'dm') {
+      PartiesService.acceptDMToParty(req.app.get('db'), requester)
+        .then((result) => {
+          return res.json(result);
+        })
+        .catch(next);
+    }
   });
 
 partiesRouter

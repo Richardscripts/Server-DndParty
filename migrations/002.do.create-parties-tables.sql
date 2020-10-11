@@ -16,5 +16,6 @@ CREATE TABLE parties (
   auto_accepts TEXT,
   banned_books TEXT,
   date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
-  user_id_creator int references users (user_id) NOT NULL
+  user_id_creator int references users (user_id) NOT NULL,
+  party_complete TEXT DEFAULT 'Party Incomplete!'
 );

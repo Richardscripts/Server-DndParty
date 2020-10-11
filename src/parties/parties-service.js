@@ -10,6 +10,22 @@ const PartiesService = {
   },
   getAllPartiesFromDB(db) {
     return db('parties').select('*');
+    // .then((parties) => {
+    //   return db('partyusers')
+    //     .select('*')
+    //     .then((partyusers) => {
+    //       parties.push(partyusers);
+    //       return parties;
+    //     })
+    //     .then((parties) => {
+    //       return db('partyrequests')
+    //         .select('*')
+    //         .then((partyrequests) => {
+    //           parties.push(partyrequests);
+    //           return parties;
+    //         });
+    //     });
+    // });
   },
   getIndividualPartyFromDB(db, party_id) {
     return db('parties')
@@ -25,7 +41,7 @@ const PartiesService = {
         return res;
       });
   },
-  getJoinedParty(db, party_id) {
+  getUsersJoinedParty(db, party_id) {
     return db('partyusers')
       .select('user_name')
       .join('users', function () {
@@ -43,6 +59,12 @@ const PartiesService = {
       .then((res) => {
         return res;
       });
+  },
+  checkPartyRequest(db, newRequest) {
+    return db('partyrequests').where(newRequest).first();
+  },
+  checkPartyJoined(db, newRequest) {
+    return db('partyusers').where(newRequest).first();
   },
   createPartyRequest(db, newRequest) {
     return db('partyrequests')
@@ -74,6 +96,75 @@ const PartiesService = {
           .then((res) => {
             return res;
           });
+      });
+  },
+  acceptDMToParty(db, requesterToJoin) {
+    return db('parties')
+      .where({ party_id: requesterToJoin.party_id })
+      .first()
+      .then((party) => {
+        if (!party.players_needed) {
+          return db('parties')
+            .where({ party_id: requesterToJoin.party_id })
+            .update({ dm_needed: false, party_complete: 'Complete Party!' })
+            .then(() => {
+              return db('partyrequests')
+                .where(requesterToJoin)
+                .del()
+                .then(() => {
+                  return db('partyusers')
+                    .insert(requesterToJoin)
+                    .returning('*')
+                    .then((res) => {
+                      return res;
+                    });
+                });
+            });
+        } else {
+          return db('parties')
+            .where({ party_id: requesterToJoin.party_id })
+            .update({ dm_needed: false })
+            .then(() => {
+              return db('partyrequests')
+                .where(requesterToJoin)
+                .del()
+                .then(() => {
+                  return db('partyusers')
+                    .insert(requesterToJoin)
+                    .returning('*')
+                    .then((res) => {
+                      return res;
+                    });
+                });
+            });
+        }
+      });
+  },
+  decreasePlayersNeeded(db, party_id) {
+    return db('parties')
+      .where({ 'parties.party_id': party_id })
+      .first()
+      .then((results) => {
+        if (results.players_needed > 0) {
+          results.players_needed = Number(results.players_needed) - 1;
+          return results;
+        } else {
+          return results;
+        }
+      })
+      .then((results) => {
+        if (results.players_needed === 0 && !results.dm_needed) {
+          return db('parties').where({ 'parties.party_id': party_id }).update({
+            players_needed: results.players_needed,
+            party_complete: 'Complete Party!',
+          });
+        } else if (results.players_needed !== 0) {
+          return db('parties').where({ 'parties.party_id': party_id }).update({
+            players_needed: results.players_needed,
+          });
+        } else {
+          return;
+        }
       });
   },
 };

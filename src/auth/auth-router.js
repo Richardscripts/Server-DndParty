@@ -41,6 +41,7 @@ authRouter.route('/register').post(jsonBodyParser, (req, res, next) => {
               res.status(201).send({
                 authToken: AuthService.createJwt(user.user_email, {
                   user_id: user.user_id,
+                  user_name: user.user_name,
                 }),
                 user_id: user.user_id,
               });
@@ -75,7 +76,10 @@ authRouter.post('/login', jsonBodyParser, (req, res, next) => {
             error: 'Invalid Credentials',
           });
         const sub = dbUser.user_email;
-        const payload = { user_id: dbUser.user_id };
+        const payload = {
+          user_id: dbUser.user_id,
+          user_name: dbUser.user_name,
+        };
         res.json({
           authToken: AuthService.createJwt(sub, payload),
         });
