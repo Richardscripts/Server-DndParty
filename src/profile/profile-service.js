@@ -1,12 +1,21 @@
 const ProfileService = {
-  getUserInfoFromDB(db, id) {
+  getUserInfoFromDB(db, user_id) {
     return db('users')
       .select('*')
-      .where({ user_id: id })
+      .where({ user_id })
       .first()
       .then((res) => {
         delete res.password;
         delete res.user_email;
+        return res;
+      });
+  },
+  updateUserInfo(db, userInfo, user_id) {
+    return db('users')
+      .where({ user_id })
+      .update(userInfo)
+      .returning('*')
+      .then((res) => {
         return res;
       });
   },
