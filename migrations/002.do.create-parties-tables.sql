@@ -1,6 +1,6 @@
 CREATE TABLE parties (
   party_id INTEGER PRIMARY KEY GENERATED Always AS IDENTITY,
-  party_name TEXT NOT NULL,
+  party_name TEXT UNIQUE NOT NULL,
   language TEXT,
   time_of_event TEXT,
   dnd_edition TEXT,
@@ -13,8 +13,6 @@ CREATE TABLE parties (
   camera_required boolean,
   about TEXT,
   campaign_or_custom TEXT,
-  auto_accepts TEXT,
-  banned_books TEXT,
   date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
   user_id_creator int references users (user_id) NOT NULL,
   party_complete TEXT DEFAULT 'Party Incomplete!'

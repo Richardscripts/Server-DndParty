@@ -80,8 +80,8 @@ partiesRouter
       user_id: req.user.user_id,
       party_id: req.body.party_id,
     };
-    PartiesService.checkPartyRequest(req.app.get('db'), newRequest).then(
-      (alreadyRequested) => {
+    PartiesService.checkPartyRequest(req.app.get('db'), newRequest)
+      .then((alreadyRequested) => {
         if (!alreadyRequested) {
           PartiesService.checkPartyJoined(req.app.get('db'), newRequest).then(
             (alreadyJoined) => {
@@ -99,31 +99,27 @@ partiesRouter
         } else {
           return res.end();
         }
-      }
-    );
+      })
+      .catch(next);
   });
 
-partiesRouter
-  .route('/joined')
-  .post(requireAuth, jsonBodyParser, (req, res, next) => {
-    const party_id = req.body.party_id;
-    PartiesService.getUsersJoinedParty(req.app.get('db'), party_id).then(
-      (result) => {
-        return res.json(result);
-      }
-    );
-  });
+partiesRouter.route('/joined').post(jsonBodyParser, (req, res, next) => {
+  const party_id = req.body.party_id;
+  PartiesService.getUsersJoinedParties(req.app.get('db'), party_id)
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch(next);
+});
 
-partiesRouter
-  .route('/joined/:user_id')
-  .post(requireAuth, jsonBodyParser, (req, res, next) => {
-    const user_id = req.params.user_id;
-    PartiesService.getUserJoinedParty(req.app.get('db'), user_id).then(
-      (result) => {
-        return res.json(result);
-      }
-    );
-  });
+partiesRouter.route('/joined/:user_id').get(requireAuth, (req, res, next) => {
+  const user_id = req.params.user_id;
+  PartiesService.getUserJoinedParties(req.app.get('db'), user_id)
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch(next);
+});
 
 partiesRouter
   .route('/accept_request')
@@ -153,14 +149,12 @@ partiesRouter
     }
   });
 
-partiesRouter
-  .route('/requests')
-  .post(requireAuth, jsonBodyParser, (req, res, next) => {
-    PartiesService.getAllPartyRequests(req.app.get('db'), req.body.party_id)
-      .then((result) => {
-        return res.json(result);
-      })
-      .catch(next);
-  });
+partiesRouter.route('/requests').post(jsonBodyParser, (req, res, next) => {
+  PartiesService.getAllPartyRequests(req.app.get('db'), req.body.party_id)
+    .then((result) => {
+      return res.json(result);
+    })
+    .catch(next);
+});
 
 module.exports = partiesRouter;

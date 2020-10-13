@@ -10,22 +10,6 @@ const PartiesService = {
   },
   getAllPartiesFromDB(db) {
     return db('parties').select('*');
-    // .then((parties) => {
-    //   return db('partyusers')
-    //     .select('*')
-    //     .then((partyusers) => {
-    //       parties.push(partyusers);
-    //       return parties;
-    //     })
-    //     .then((parties) => {
-    //       return db('partyrequests')
-    //         .select('*')
-    //         .then((partyrequests) => {
-    //           parties.push(partyrequests);
-    //           return parties;
-    //         });
-    //     });
-    // });
   },
   getIndividualPartyFromDB(db, party_id) {
     return db('parties')
@@ -41,17 +25,17 @@ const PartiesService = {
         return res;
       });
   },
-  getUsersJoinedParty(db, party_id) {
+  getUsersJoinedParties(db, party_id) {
     return db('partyusers')
-      .select('user_name')
+      .select('user_name', 'partyusers.user_id')
       .join('users', function () {
         this.on('users.user_id', '=', 'partyusers.user_id');
       })
       .where({ 'partyusers.party_id': party_id });
   },
-  getUserJoinedParty(db, user_id) {
+  getUserJoinedParties(db, user_id) {
     return db('parties')
-      .select('parties.party_name')
+      .select('parties.party_name', 'parties.party_id')
       .join('partyusers', function () {
         this.on('parties.party_id', '=', 'partyusers.party_id');
       })
