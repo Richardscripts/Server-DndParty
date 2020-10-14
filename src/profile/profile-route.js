@@ -25,7 +25,7 @@ profileRouter
       location,
       languages,
       contact,
-      about,
+      about_me,
       preferred_editions,
       preferred_classes,
     } = req.body;
@@ -38,7 +38,7 @@ profileRouter
       location,
       languages,
       contact,
-      about,
+      about_me,
       preferred_editions,
       preferred_classes,
     };

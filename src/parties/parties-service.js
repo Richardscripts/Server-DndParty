@@ -19,6 +19,7 @@ const PartiesService = {
       })
       .where({ 'parties.party_id': party_id })
       .then((res) => {
+        console.log(res);
         delete res[0].password;
         delete res[0].user_email;
         delete res[0].user_id;
