@@ -10,12 +10,26 @@ const ProfileService = {
         return res;
       });
   },
+  checkUsernameExists(db, user_name) {
+    return db('users')
+      .select('*')
+      .where({ user_name })
+      .first()
+      .then((res) => {
+        if (res) {
+          delete res.password;
+          delete res.user_email;
+        }
+        return res;
+      });
+  },
   updateUserInfo(db, userInfo, user_id) {
     return db('users')
       .where({ user_id })
       .update(userInfo)
       .returning('*')
       .then((res) => {
+        delete res[0].password;
         return res;
       });
   },
@@ -30,3 +44,5 @@ const ProfileService = {
 };
 
 module.exports = ProfileService;
+
+//take in user -> return xss for each value of user

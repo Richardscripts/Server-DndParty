@@ -16,9 +16,9 @@ app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
 
-app.use('/auth', authRouter);
-app.use('/parties', partiesRouter);
-app.use('/profile', profileRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/parties', partiesRouter);
+app.use('/api/profile', profileRouter);
 
 app.use(function errorHandler(error, req, res, next) {
   let response;

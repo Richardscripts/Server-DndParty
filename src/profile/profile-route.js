@@ -1,5 +1,7 @@
 const express = require('express');
 const ProfileService = require('./profile-service');
+const { requireAuth } = require('../middleware/require-auth');
+const serializeData = require('../serializeData/serializeData');
 
 const profileRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -10,11 +12,11 @@ profileRouter
     const user_id = req.params.user_id;
     ProfileService.getUserInfoFromDB(req.app.get('db'), user_id)
       .then((result) => {
-        return res.json(result);
+        return res.json(serializeData(result));
       })
       .catch(next);
   })
-  .patch(jsonBodyParser, (req, res, next) => {
+  .patch(requireAuth, jsonBodyParser, (req, res, next) => {
     const user_id = req.params.user_id;
     const {
       first_name,
@@ -42,9 +44,16 @@ profileRouter
       preferred_editions,
       preferred_classes,
     };
-    ProfileService.updateUserInfo(req.app.get('db'), userInfo, user_id)
+    ProfileService.checkUsernameExists(req.app.get('db'), user_name)
       .then((result) => {
-        return res.json(result);
+        if (result) {
+          return res.status(400).json({ error: 'Nickname already exists' });
+        }
+        ProfileService.updateUserInfo(req.app.get('db'), userInfo, user_id)
+          .then((result) => {
+            return res.status(200).json(result.map(serializeData));
+          })
+          .catch(next);
       })
       .catch(next);
   });
@@ -55,7 +64,7 @@ profileRouter
     const user_id = req.params.user_id;
     ProfileService.getUserCreatedTablesFromDB(req.app.get('db'), user_id)
       .then((result) => {
-        return res.json(result);
+        return res.json(result.map(serializeData));
       })
       .catch(next);
   });

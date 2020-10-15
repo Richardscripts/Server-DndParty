@@ -1,6 +1,7 @@
 const express = require('express');
 const PartiesService = require('./parties-service');
 const { requireAuth } = require('../middleware/require-auth');
+const serializeData = require('../serializeData/serializeData');
 
 const partiesRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -40,7 +41,7 @@ partiesRouter
       user_id_creator: req.user.user_id,
     };
     if (!party_name) {
-      return res.status(400).json({ error: 'Missing Party Name' });
+      return res.status(400).json({ error: 'Missing Required Fields' });
     }
     PartiesService.getPartyName(req.app.get('db'), party_name).then(
       (result) => {
@@ -49,7 +50,7 @@ partiesRouter
         } else {
           PartiesService.createParty(req.app.get('db'), newParty)
             .then((result) => {
-              return res.status(201).send(result);
+              return res.status(201).send(serializeData(result));
             })
             .catch(next);
         }
@@ -59,7 +60,7 @@ partiesRouter
   .get((req, res, next) => {
     PartiesService.getAllPartiesFromDB(req.app.get('db'))
       .then((result) => {
-        return res.json(result);
+        return res.json(result.map(serializeData));
       })
       .catch(next);
   });
@@ -68,7 +69,7 @@ partiesRouter.route('/:party_id').get((req, res, next) => {
   const party_id = req.params.party_id;
   PartiesService.getIndividualPartyFromDB(req.app.get('db'), party_id)
     .then((result) => {
-      return res.json(result);
+      return res.json(result.map(serializeData));
     })
     .catch(next);
 });
@@ -88,7 +89,7 @@ partiesRouter
               if (!alreadyJoined) {
                 PartiesService.createPartyRequest(req.app.get('db'), newRequest)
                   .then((result) => {
-                    return res.status(201).send(result);
+                    return res.status(201).send(serializeData(result));
                   })
                   .catch(next);
               } else {
@@ -107,7 +108,7 @@ partiesRouter.route('/joined').post(jsonBodyParser, (req, res, next) => {
   const party_id = req.body.party_id;
   PartiesService.getUsersJoinedParties(req.app.get('db'), party_id)
     .then((result) => {
-      return res.json(result);
+      return res.json(result.map(serializeData));
     })
     .catch(next);
 });
@@ -116,7 +117,7 @@ partiesRouter.route('/joined/:user_id').get(requireAuth, (req, res, next) => {
   const user_id = req.params.user_id;
   PartiesService.getUserJoinedParties(req.app.get('db'), user_id)
     .then((result) => {
-      return res.json(result);
+      return res.json(result.map(serializeData));
     })
     .catch(next);
 });
@@ -136,14 +137,14 @@ partiesRouter
             req.app.get('db'),
             requester.party_id
           ).then((result) => {
-            return res.json(result);
+            return res.json(serializeData(result));
           });
         })
         .catch(next);
     } else if (type === 'dm') {
       PartiesService.acceptDMToParty(req.app.get('db'), requester)
         .then((result) => {
-          return res.json(result);
+          return res.json(serializeData(result));
         })
         .catch(next);
     }
@@ -152,7 +153,7 @@ partiesRouter
 partiesRouter.route('/requests').post(jsonBodyParser, (req, res, next) => {
   PartiesService.getAllPartyRequests(req.app.get('db'), req.body.party_id)
     .then((result) => {
-      return res.json(result);
+      return res.json(result.map(serializeData));
     })
     .catch(next);
 });
