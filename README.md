@@ -1,26 +1,23 @@
-# Express Boilerplate!
+# DndParty 
+DndParty is a website for users to create and join parties to experience the greatest roleplaying tabletop game of all time: *Dungeons and Dragons!*
 
-This is a boilerplate project used for starting new projects!
+**Frontend:** `HTML CSS JAVASCRIPT JSX REACTJS `
 
-## Set up
+**Server-side:**  `NODEJS EXPRESS KNEX`
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+**Backend: **`POSTGRESQL`
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+**Testing:** `JEST MOCHA CHAI SUPERTEST`
 
-## Scripts
+## **How it Works:**
+The User experience involves:
+1. Registration \  Login to person Account
+2. Personal Profile that keeps track of all games created and parties joined,
+as well as tons of information to help communicate what you are looking for in a group
+3. Join parties based on robust listed information
+4. Create a Party with Admin access of who you allow to join and as what type of player: Dungeon Master or Player
+5. View all Parties on Home page.
+6. A11y Accessible for screenreaders
+7. Fully media response across multiple devices.
 
-Start the application `npm start`
 
-Start nodemon for the application `npm run dev`
-
-Run the tests `npm test`
-
-## Deploying
-
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
