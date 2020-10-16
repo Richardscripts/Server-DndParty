@@ -47,7 +47,6 @@ profileRouter
         .status(400)
         .json({ error: 'Nickname must be atleast 1 Character' });
     }
-
     ProfileService.checkUsernameExists(req.app.get('db'), user_name)
       .then((result) => {
         if (

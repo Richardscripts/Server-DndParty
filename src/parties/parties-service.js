@@ -151,27 +151,6 @@ const PartiesService = {
         }
       });
   },
-  // serializeParty(party) {
-  //   return {
-  //     party_id: party.party_id,
-  //     party_name: xss(party.party_name),
-  //     language: xss(party.language),
-  //     time_of_event: xss(party.time_of_event),
-  //     dnd_edition: xss(party.dnd_edition),
-  //     players_needed: xss(party.players_needed),
-  //     dm_needed: party.dm_needed,
-  //     homebrew_rules: xss(party.homebrew_rules),
-  //     classes_needed: xss(party.classes_needed),
-  //     group_personality: xss(party.group_personality),
-  //     online_or_not: party.online_or_not,
-  //     camera_required: party.camera_required,
-  //     about: xss(party.about),
-  //     campaign_or_custom: xss(party.campaign_or_custom),
-  //     date_created: party.date_created,
-  //     party_complete: party.party_complete,
-  //     user_id_creator: party.user_id_creator,
-  //   };
-  // },
 };
 
 module.exports = PartiesService;

@@ -44,5 +44,3 @@ const ProfileService = {
 };
 
 module.exports = ProfileService;
-
-//take in user -> return xss for each value of user
