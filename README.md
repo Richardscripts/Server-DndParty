@@ -1,26 +1,54 @@
-# Express Boilerplate!
+# DndParty 
+DndParty is a website for users to create and join parties to experience the greatest roleplaying tabletop game of all time: *Dungeons and Dragons!*
 
-This is a boilerplate project used for starting new projects!
+**Frontend:** `HTML CSS JAVASCRIPT JSX REACTJS `
 
-## Set up
+**Server-side:**  `NODEJS EXPRESS KNEX`
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+**Backend: **`POSTGRESQL`
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+**Testing:** `JEST MOCHA CHAI SUPERTEST`
 
-## Scripts
+## **How it Works:**
+The User experience involves:
+1. Registration \  Login to person Account
+2. Personal Profile that keeps track of all games created and parties joined,
+as well as tons of information to help communicate what you are looking for in a group
+3. Join parties based on robust listed information
+4. Create a Party with Admin access of who you allow to join and as what type of player: Dungeon Master or Player
+5. View all Parties on Home page.
+6. A11y Accessible for screenreaders
+7. Fully media responsive across multiple devices.
 
-Start the application `npm start`
+## Register to make an Account. Requires only an Email address.
+[![Register](https://i.ibb.co/SyMTycj/Ss1.png "Register")](https://i.ibb.co/SyMTycj/Ss1.png "Register")
 
-Start nodemon for the application `npm run dev`
+## View Parties created by Users
+[![Parties](https://i.ibb.co/hdS6KC9/Ss2.png "Parties")](https://i.ibb.co/hdS6KC9/Ss2.png "Parties")
 
-Run the tests `npm test`
+## View and Edit your own personal profile
+[![Profile1](https://i.ibb.co/whmwBrK/Ss3.png "Profile1")](https://i.ibb.co/whmwBrK/Ss3.png "Profile1")
 
-## Deploying
+## View Parties you have joined, created, and users requesting to join your parties
+[![Profile2](https://i.ibb.co/KxWrtbD/Ss4.png "Profile2")](https://i.ibb.co/KxWrtbD/Ss4.png "Profile2")
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## Create your very own Party for roleplayers to join
+[![Create](https://i.ibb.co/YW2DnqX/Ss5.png "Create")](https://i.ibb.co/YW2DnqX/Ss5.png "Create")
+
+
+## API Documentation
+
+| path   |  info  |
+| ------------ | ------------ |
+|  api/parties POST |  Create a new Party |
+|  api/parties GET  |  Retrieve all Parties from Database |
+|  api/parties/:party_id POST |  Create a Request to Join a Party |
+|  api/parties/joined POST |  Retrieve Users who Joined a Party |
+|  api/parties/joined/:user_id GET |  Retrieve Parties User has Joined |
+|  api/parties/accept_request POST | Accept a Request to Join a Party  |
+|  api/parties/requests GET |  Retrieve all request for a Party |
+|  api/profile/:user_id GET | Retrieve User Profile information   |
+|  api/profile/:user_id PATCH | Update User Profile Information  |
+|  api/profile/created_parties/:user_id GET |  Retrieve Parties created by User |
+
+
