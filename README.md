@@ -18,6 +18,6 @@ as well as tons of information to help communicate what you are looking for in a
 4. Create a Party with Admin access of who you allow to join and as what type of player: Dungeon Master or Player
 5. View all Parties on Home page.
 6. A11y Accessible for screenreaders
-7. Fully media response across multiple devices.
+7. Fully media responsive across multiple devices.
 
 
