@@ -148,7 +148,7 @@ describe('Parties Endpoints', function () {
         });
     });
 
-    it('adds user to requesters table when request to join', () => {
+    it('posts user to requesters table when request to join', () => {
       testParty.party_id = 1;
       testUser.user_id = 1;
       return supertest(app)
@@ -160,11 +160,12 @@ describe('Parties Endpoints', function () {
           db('partyrequests')
             .select('*')
             .where({ party_id: testParty.party_id })
-            .first()
-            .then((res) => {
-              expect(res.user_id).to.eql(testUser.user_id);
-              delete testUser.user_id;
-              delete testParty.party_id;
+            .then((requests) => {
+              for (let i = 0; i < requests.length; i++) {
+                expect(requests[i].party_id).to.eql(1);
+                delete testUser.user_id;
+                delete testParty.party_id;
+              }
             });
         });
     });
@@ -177,6 +178,7 @@ describe('Parties Endpoints', function () {
         .send({ party_id: testParty.party_id })
         .expect(200)
         .expect((res) => {
+          console.log('this');
           expect(res.body[0]).to.eql(usersWhoJoined);
           delete testParty.party_id;
         });
@@ -198,38 +200,49 @@ describe('Parties Endpoints', function () {
         });
     });
 
-    // it(`responds 200 and accepts requester to join party`, () => {
-    //   testUser.user_id = '2';
-    //   testParty.party_id = '1';
-    //   return supertest(app)
-    //     .post(`/api/parties/accept_request`)
-    //     .set('Authorization', helpers.makeAuthHeader(testUser))
-    //     .expect(200)
-    //     .expect((res) => {
-    //       const party = res.body[0];
-    //       expect(party.party_name).to.eql(testParty.party_name);
-    //       expect(party.party_id).to.eql(testParty.party_id);
-    //     });
-    // });
+    it(`responds 200 and accepts requester to join party`, () => {
+      testUser.user_id = 2;
+      testParty.party_id = '1';
+      let requesterToAccept = {
+        user_id: testUser.user_id,
+        party_id: testParty.party_id,
+        type: 'player',
+      };
+      return supertest(app)
+        .post(`/api/parties/accept_request`)
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(requesterToAccept)
+        .expect(200)
+        .expect(() => {
+          db('partyusers')
+            .select('*')
+            .where({ user_id: testUser.user_id })
+            .then((res) => {
+              const user = res[0];
+              expect(user.user_id).to.eql(testUser.user_id);
+              delete testUser.user_id;
+              delete testParty.party_id;
+            });
+        });
+    });
 
-    // it('gets all requests to join for individual Party from database', () => {
-    //   return supertest(app)
-    //     .get('/api/parties')
-    //     .expect(200)
-    //     .then((res) => {
-    //       const parties = res.body;
-    //       for (let i = 0; i < parties.length; i++) {
-    //         expect(parties[i].time_of_event).to.eql(
-    //           testParties[i].time_of_event
-    //         );
-    //         expect(Number(parties[i].user_id_creator)).to.eql(
-    //           testParties[i].user_id_creator
-    //         );
-    //         expect(parties[i].language).to.eql(testParties[i].language);
-    //         expect(parties[i].party_name).to.eql(testParties[i].party_name);
-    //         expect(parties[i].about).to.eql(testParties[i].about);
-    //       }
-    //     });
-    // });
+    it("gets all user's requests to join individual Party from database", () => {
+      testParty.party_id = 1;
+      const party = { party_id: testParty.party_id };
+      return supertest(app)
+        .post('/api/parties/requests')
+        .send(party)
+        .expect(200)
+        .then(() => {
+          db('partyusers')
+            .select('*')
+            .where({ party_id: testParty.party_id })
+            .then((res) => {
+              const parties = res[0];
+              expect(parties.party_id).to.eql(testParty.party_id);
+              delete testParty.party_id;
+            });
+        });
+    });
   });
 });

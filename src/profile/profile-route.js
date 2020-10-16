@@ -21,7 +21,6 @@ profileRouter
     const {
       first_name,
       user_name,
-      user_email,
       last_name,
       dnd_experience,
       location,
@@ -34,7 +33,6 @@ profileRouter
     const userInfo = {
       first_name,
       user_name,
-      user_email,
       last_name,
       dnd_experience,
       location,
@@ -44,16 +42,26 @@ profileRouter
       preferred_editions,
       preferred_classes,
     };
+    if (!user_name) {
+      return res
+        .status(400)
+        .json({ error: 'Nickname must be atleast 1 Character' });
+    }
+
     ProfileService.checkUsernameExists(req.app.get('db'), user_name)
       .then((result) => {
-        if (result) {
+        if (
+          !result ||
+          (result.user_name === user_name && result.user_id == user_id)
+        ) {
+          ProfileService.updateUserInfo(req.app.get('db'), userInfo, user_id)
+            .then((result) => {
+              return res.status(200).json(result.map(serializeData));
+            })
+            .catch(next);
+        } else {
           return res.status(400).json({ error: 'Nickname already exists' });
         }
-        ProfileService.updateUserInfo(req.app.get('db'), userInfo, user_id)
-          .then((result) => {
-            return res.status(200).json(result.map(serializeData));
-          })
-          .catch(next);
       })
       .catch(next);
   });

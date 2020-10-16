@@ -113,7 +113,7 @@ partiesRouter.route('/joined').post(jsonBodyParser, (req, res, next) => {
     .catch(next);
 });
 
-partiesRouter.route('/joined/:user_id').get(requireAuth, (req, res, next) => {
+partiesRouter.route('/joined/:user_id').get((req, res, next) => {
   const user_id = req.params.user_id;
   PartiesService.getUserJoinedParties(req.app.get('db'), user_id)
     .then((result) => {
@@ -133,12 +133,13 @@ partiesRouter
     if (type === 'player') {
       PartiesService.acceptUserToParty(req.app.get('db'), requester, type)
         .then(() => {
-          PartiesService.decreasePlayersNeeded(
+          return PartiesService.decreasePlayersNeeded(
             req.app.get('db'),
             requester.party_id
-          ).then((result) => {
-            return res.json(serializeData(result));
-          });
+          );
+        })
+        .then((result) => {
+          return res.json(serializeData(result));
         })
         .catch(next);
     } else if (type === 'dm') {

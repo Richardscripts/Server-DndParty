@@ -151,18 +151,11 @@ function seedUsers(db, users) {
 }
 
 function seedPartiesTables(db, users, parties = []) {
-  return (
-    db('users')
-      .then(() => seedUsers(db, users))
-      .then(() => db.into('parties').insert(parties))
-      // .then(() => db.into('partyrequests').insert({ user_id: 3, party_id: 1 }))
-      .then(() => db.into('partyusers').insert({ user_id: 2, party_id: 1 }))
-  );
-  // .then(() =>
-  //   db.raw(`SELECT setval('thingful_users_id_seq', ?)`, [
-  //     users[users.length - 1].id,
-  //   ])
-  // )
+  return db('users')
+    .then(() => seedUsers(db, users))
+    .then(() => db.into('parties').insert(parties))
+    .then(() => db.into('partyrequests').insert({ user_id: 3, party_id: 1 }))
+    .then(() => db.into('partyusers').insert({ user_id: 2, party_id: 1 }));
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
