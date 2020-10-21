@@ -12,8 +12,8 @@ VALUES
 ('3@aol.com', 'Elf', '$2a$10$hh/8v4wCrJ4JA3mJzRk0S.w2vyJew.F73ZYZwo9/DWJra1SzNk1B2'),
 ('4@aol.com', 'Bard', '$2a$10$hh/8v4wCrJ4JA3mJzRk0S.w2vyJew.F73ZYZwo9/DWJra1SzNk1B2');
 
-INSERT INTO parties (party_name, user_id_creator, players_needed)
-VALUES('Table - One', '1', '2');
+INSERT INTO parties (party_name, user_id_creator, players_needed, dm_needed)
+VALUES('Table - One', '1', '1', 'true');
 
 INSERT INTO partyrequests (user_id, party_id)
 VALUES
