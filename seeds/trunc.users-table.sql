@@ -3,7 +3,8 @@ BEGIN;
 TRUNCATE
   partyusers,
   partyrequests,
-  parties;
+  parties,
+  users;
 
 INSERT INTO users 
 (user_email, user_name, password) 
