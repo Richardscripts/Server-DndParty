@@ -131,17 +131,18 @@ partiesRouter
       party_id: req.body.party_id,
     };
     if (type === 'player') {
-      PartiesService.acceptUserToParty(req.app.get('db'), requester, type)
-        .then(() => {
-          return PartiesService.decreasePlayersNeeded(
+      PartiesService.acceptUserToParty(req.app.get('db'), requester, type).then(
+        () => {
+          PartiesService.decreasePlayersNeeded(
             req.app.get('db'),
             requester.party_id
-          );
-        })
-        .then((result) => {
-          return res.json(serializeData(result));
-        })
-        .catch(next);
+          )
+            .then((result) => {
+              return res.json(serializeData(result));
+            })
+            .catch(next);
+        }
+      );
     } else if (type === 'dm') {
       PartiesService.acceptDMToParty(req.app.get('db'), requester)
         .then((result) => {
