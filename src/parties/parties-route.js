@@ -130,6 +130,7 @@ partiesRouter
       user_id: req.body.user_id,
       party_id: req.body.party_id,
     };
+    console.log(requester.party_id);
     if (type === 'player') {
       PartiesService.acceptUserToParty(req.app.get('db'), requester, type).then(
         () => {

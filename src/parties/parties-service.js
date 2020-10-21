@@ -87,7 +87,7 @@ const PartiesService = {
       .where({ party_id: requesterToJoin.party_id })
       .first()
       .then((party) => {
-        if (!party.players_needed) {
+        if (party.players_needed === '0') {
           return db('parties')
             .where({ party_id: requesterToJoin.party_id })
             .update({ dm_needed: false, party_complete: 'Complete Party!' })
@@ -126,7 +126,7 @@ const PartiesService = {
   },
   decreasePlayersNeeded(db, party_id) {
     return db('parties')
-      .where({ 'parties.party_id': party_id })
+      .where({ party_id: party_id })
       .first()
       .then((results) => {
         if (results.players_needed > 0) {
@@ -142,12 +142,10 @@ const PartiesService = {
             players_needed: results.players_needed,
             party_complete: 'Complete Party!',
           });
-        } else if (results.players_needed !== 0) {
+        } else {
           return db('parties').where({ 'parties.party_id': party_id }).update({
             players_needed: results.players_needed,
           });
-        } else {
-          return;
         }
       });
   },
