@@ -5,7 +5,7 @@ CREATE TABLE parties (
   time_of_event TEXT,
   dnd_edition TEXT,
   players_needed TEXT,
-  dm_needed boolean,
+  dm_needed boolean DEFAULT false,
   homebrew_rules TEXT,
   classes_needed TEXT,
   group_personality TEXT,
