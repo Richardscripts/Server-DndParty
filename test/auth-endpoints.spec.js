@@ -136,6 +136,7 @@ describe('Auth Endpoints', function () {
         process.env.JWT_SECRET,
         {
           subject: testUser.user_email,
+          expiresIn: process.env.JWT_EXPIRY,
           algorithm: 'HS256',
         }
       );
