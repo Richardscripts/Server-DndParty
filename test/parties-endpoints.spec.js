@@ -178,7 +178,6 @@ describe('Parties Endpoints', function () {
         .send({ party_id: testParty.party_id })
         .expect(200)
         .expect((res) => {
-          console.log('this');
           expect(res.body[0]).to.eql(usersWhoJoined);
           delete testParty.party_id;
         });

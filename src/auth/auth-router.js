@@ -2,8 +2,11 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const edc = require('email-domain-check');
 const AuthService = require('./auth-service');
+
+
 const authRouter = express.Router();
 const jsonBodyParser = express.json();
+
 
 authRouter.route('/register').post(jsonBodyParser, (req, res, next) => {
   let { user_email, password, user_name } = req.body;
