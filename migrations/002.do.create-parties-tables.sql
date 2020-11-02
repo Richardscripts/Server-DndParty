@@ -4,7 +4,7 @@ CREATE TABLE parties (
   language TEXT,
   time_of_event TEXT,
   dnd_edition TEXT,
-  players_needed TEXT,
+  players_needed integer,
   dm_needed boolean DEFAULT false,
   homebrew_rules TEXT,
   classes_needed TEXT,
@@ -14,6 +14,6 @@ CREATE TABLE parties (
   about TEXT,
   campaign_or_custom TEXT,
   date_created TIMESTAMPTZ DEFAULT now() NOT NULL,
-  user_id_creator int references users (user_id) NOT NULL,
+  user_id_creator int references users (user_id) ON DELETE CASCADE NOT NULL,
   party_complete TEXT DEFAULT 'Party Incomplete!'
 );

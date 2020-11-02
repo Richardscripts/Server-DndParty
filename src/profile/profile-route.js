@@ -2,13 +2,12 @@ const express = require('express');
 const ProfileService = require('./profile-service');
 const { requireAuth } = require('../middleware/require-auth');
 const serializeData = require('../serializeData/serializeData');
-
 const profileRouter = express.Router();
 const jsonBodyParser = express.json();
 
 profileRouter
   .route('/:user_id')
-  .get((req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const user_id = req.params.user_id;
     ProfileService.getUserInfoFromDB(req.app.get('db'), user_id)
       .then((result) => {
@@ -17,9 +16,9 @@ profileRouter
       .catch(next);
   })
   .patch(requireAuth, jsonBodyParser, (req, res, next) => {
-    const user_id = req.params.user_id;
+    const user_id = req.user.user_id;
     const {
-      first_name,
+      name,
       user_name,
       last_name,
       dnd_experience,
@@ -31,7 +30,7 @@ profileRouter
       preferred_classes,
     } = req.body;
     const userInfo = {
-      first_name,
+      name,
       user_name,
       last_name,
       dnd_experience,

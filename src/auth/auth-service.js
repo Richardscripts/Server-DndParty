@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const e = require('express');
 const jwt = require('jsonwebtoken');
 
 const { JWT_SECRET, JWT_EXPIRY } = require('../../config');
@@ -32,6 +33,18 @@ const AuthService = {
     return jwt.verify(token, JWT_SECRET, {
       algorithms: ['HS256'],
     });
+  },
+  getPartyCreator(db, user_id, party_id) {
+    return db('parties')
+      .where({ party_id })
+      .first()
+      .then((result) => {
+        if (result.user_id_creator === user_id) {
+          return true;
+        } else {
+          return false;
+        }
+      });
   },
 };
 

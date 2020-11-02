@@ -87,7 +87,7 @@ const PartiesService = {
       .where({ party_id: requesterToJoin.party_id })
       .first()
       .then((party) => {
-        if (party.players_needed === '0') {
+        if (!party.players_needed) {
           return db('parties')
             .where({ party_id: requesterToJoin.party_id })
             .update({ dm_needed: false, party_complete: 'Complete Party!' })
@@ -147,6 +147,37 @@ const PartiesService = {
             players_needed: results.players_needed,
           });
         }
+      });
+  },
+  insertChatMessage(db, newMessage) {
+    return db('chatmessages')
+      .insert(newMessage)
+      .returning('*')
+      .then(([res]) => res);
+  },
+  getChatMessages(db, party_id) {
+    return db('chatmessages')
+      .select(
+        'chatmessages.user_id',
+        'chatmessages.party_id',
+        'chatmessages.message',
+        'chatmessages.date_created',
+        'users.user_name'
+      )
+      .where({ party_id: party_id })
+      .join('users', function () {
+        this.on('users.user_id', '=', 'chatmessages.user_id');
+      })
+      .then((res) => {
+        return res;
+      });
+  },
+  deletePartyFromDB(db, party_id) {
+    return db('parties')
+      .where({ party_id })
+      .del()
+      .then((res) => {
+        return res;
       });
   },
 };

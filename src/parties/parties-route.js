@@ -2,6 +2,9 @@ const express = require('express');
 const PartiesService = require('./parties-service');
 const { requireAuth } = require('../middleware/require-auth');
 const serializeData = require('../serializeData/serializeData');
+const AuthService = require('../auth/auth-service');
+const { chatmessagesLimiter1 } = require('../middleware/rate-limiter');
+const { chatmessagesLimiter2 } = require('../middleware/rate-limiter');
 
 const partiesRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -65,14 +68,62 @@ partiesRouter
       .catch(next);
   });
 
-partiesRouter.route('/:party_id').get((req, res, next) => {
-  const party_id = req.params.party_id;
-  PartiesService.getIndividualPartyFromDB(req.app.get('db'), party_id)
-    .then((result) => {
-      return res.json(result.map(serializeData));
-    })
-    .catch(next);
-});
+partiesRouter
+  .route('/:party_id')
+  .get((req, res, next) => {
+    const party_id = req.params.party_id;
+    PartiesService.getIndividualPartyFromDB(req.app.get('db'), party_id)
+      .then((result) => {
+        return res.json(result.map(serializeData));
+      })
+      .catch(next);
+  })
+  .delete(requireAuth, (req, res, next) => {
+    const party_id = req.params.party_id;
+    AuthService.getPartyCreator(req.app.get('db'), req.user.user_id, party_id)
+      .then((result) => {
+        console.log(result);
+        if (!result) {
+          return res.status(401).json({ error: 'Unathorized User' });
+        } else {
+          PartiesService.deletePartyFromDB(req.app.get('db'), party_id)
+            .then(() => {
+              return res.status(204).end();
+            })
+            .catch(next);
+        }
+      })
+      .catch(next);
+  });
+
+partiesRouter
+  .route('/:party_id/chat')
+  .post(
+    chatmessagesLimiter1,
+    chatmessagesLimiter2,
+    jsonBodyParser,
+    requireAuth,
+    (req, res, next) => {
+      const newMessage = {
+        party_id: req.params.party_id,
+        user_id: req.user.user_id,
+        message: req.body.message,
+      };
+      PartiesService.insertChatMessage(req.app.get('db'), newMessage)
+        .then((result) => {
+          return res.status(201).json(result);
+        })
+        .catch(next);
+    }
+  )
+  .get((req, res, next) => {
+    const party_id = req.params.party_id;
+    PartiesService.getChatMessages(req.app.get('db'), party_id)
+      .then((result) => {
+        return res.json(result);
+      })
+      .catch(next);
+  });
 
 partiesRouter
   .route('/join')
@@ -130,27 +181,39 @@ partiesRouter
       user_id: req.body.user_id,
       party_id: req.body.party_id,
     };
-    console.log(requester.party_id);
-    if (type === 'player') {
-      PartiesService.acceptUserToParty(req.app.get('db'), requester, type).then(
-        () => {
-          PartiesService.decreasePlayersNeeded(
+
+    AuthService.getPartyCreator(
+      req.app.get('db'),
+      req.user.user_id,
+      requester.party_id
+    ).then((result) => {
+      if (!result) {
+        return res.status(401).json({ error: 'Unathorized User' });
+      } else {
+        if (type === 'player') {
+          PartiesService.acceptUserToParty(
             req.app.get('db'),
-            requester.party_id
-          )
+            requester,
+            type
+          ).then(() => {
+            PartiesService.decreasePlayersNeeded(
+              req.app.get('db'),
+              requester.party_id
+            )
+              .then((result) => {
+                return res.json(serializeData(result));
+              })
+              .catch(next);
+          });
+        } else if (type === 'dm') {
+          PartiesService.acceptDMToParty(req.app.get('db'), requester)
             .then((result) => {
               return res.json(serializeData(result));
             })
             .catch(next);
         }
-      );
-    } else if (type === 'dm') {
-      PartiesService.acceptDMToParty(req.app.get('db'), requester)
-        .then((result) => {
-          return res.json(serializeData(result));
-        })
-        .catch(next);
-    }
+      }
+    });
   });
 
 partiesRouter.route('/requests').post(jsonBodyParser, (req, res, next) => {

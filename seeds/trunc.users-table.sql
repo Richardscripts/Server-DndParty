@@ -1,6 +1,7 @@
 BEGIN;
 
 TRUNCATE
+  chatmessages,
   partyusers,
   partyrequests,
   parties,
