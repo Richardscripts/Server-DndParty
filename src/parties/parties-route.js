@@ -98,24 +98,18 @@ partiesRouter
 
 partiesRouter
   .route('/:party_id/chat')
-  .post(
-    chatmessagesLimiter1,
-    chatmessagesLimiter2,
-    jsonBodyParser,
-    requireAuth,
-    (req, res, next) => {
-      const newMessage = {
-        party_id: req.params.party_id,
-        user_id: req.user.user_id,
-        message: req.body.message,
-      };
-      PartiesService.insertChatMessage(req.app.get('db'), newMessage)
-        .then((result) => {
-          return res.status(201).json(result);
-        })
-        .catch(next);
-    }
-  )
+  .post(jsonBodyParser, requireAuth, (req, res, next) => {
+    const newMessage = {
+      party_id: req.params.party_id,
+      user_id: req.user.user_id,
+      message: req.body.message,
+    };
+    PartiesService.insertChatMessage(req.app.get('db'), newMessage)
+      .then((result) => {
+        return res.status(201).json(result);
+      })
+      .catch(next);
+  })
   .get((req, res, next) => {
     const party_id = req.params.party_id;
     PartiesService.getChatMessages(req.app.get('db'), party_id)
