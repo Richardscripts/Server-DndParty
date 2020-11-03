@@ -21,14 +21,14 @@ app.use('/api/parties', partiesRouter);
 app.use('/api/profile', profileRouter);
 
 app.use(function errorHandler(error, req, res, next) {
-  let response;
-  if (NODE_ENV === 'production') {
-    response = { error: 'Server Error' };
-  } else {
-    console.error(error);
-    response = { error: error.message };
-  }
-  res.status(500).json(response);
+  // let response;
+  // if (NODE_ENV === 'production') {
+  //   response = { error: 'Server Error' };
+  // } else {
+  //   console.error(error);
+  //   response = { error: error.message };
+  // }
+  res.status(500).json({ error: error.message });
 });
 
 module.exports = app;
