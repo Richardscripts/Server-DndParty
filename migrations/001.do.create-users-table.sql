@@ -3,6 +3,7 @@ CREATE TABLE users (
   user_name TEXT  UNIQUE NOT NULL,
   password TEXT NOT NULL,
   user_email TEXT  UNIQUE NOT NULL,
+  policy_checked BOOLEAN DEFAULT FALSE NOT NULL,
   name TEXT,  
   dnd_experience TEXT,
   location TEXT,

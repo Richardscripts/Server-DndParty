@@ -10,10 +10,10 @@ const jsonBodyParser = express.json();
 authRouter
   .route('/register')
   .post(loginLimiter, jsonBodyParser, (req, res, next) => {
-    let { user_email, password, user_name } = req.body;
-    let newUser = { user_email, password, user_name };
+    let { user_email, password, user_name, policy_checked } = req.body;
+    let newUser = { user_email, password, user_name, policy_checked };
 
-    if (!user_email || !password || !user_name) {
+    if (!user_email || !password || !user_name || !policy_checked) {
       return res
         .status(400)
         .json({ error: 'Bad Request - Missing Credentials' });
