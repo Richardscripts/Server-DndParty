@@ -3,6 +3,7 @@ const ProfileService = require('./profile-service');
 const { requireAuth } = require('../middleware/require-auth');
 const serializeData = require('../serializeData/serializeData');
 const profileRouter = express.Router();
+
 const jsonBodyParser = express.json();
 
 profileRouter
@@ -28,6 +29,7 @@ profileRouter
       about_me,
       preferred_editions,
       preferred_classes,
+      character_sheets,
     } = req.body;
     const userInfo = {
       name,
@@ -40,6 +42,7 @@ profileRouter
       about_me,
       preferred_editions,
       preferred_classes,
+      character_sheets,
     };
     if (!user_name) {
       return res
@@ -66,7 +69,7 @@ profileRouter
 
 profileRouter
   .route('/created_parties/:user_id')
-  .get(jsonBodyParser, (req, res, next) => {
+  .get(requireAuth, (req, res, next) => {
     const user_id = req.params.user_id;
     ProfileService.getUserCreatedTablesFromDB(req.app.get('db'), user_id)
       .then((result) => {
@@ -74,5 +77,17 @@ profileRouter
       })
       .catch(next);
   });
+
+// profileRouter.post('/pdf', jsonBodyParser, async (req, res, next) => {
+//   // const pdf = req.body.filepath;
+//   let options = [
+//     'https://www.dndbeyond.com/sheet-pdfs/FartofSmith_40895787.pdf',
+//     true, //true = json format, false text format
+//   ];
+
+//   xpdf.extract(options, (file) => {
+//     console.log(file);
+//   });
+// });
 
 module.exports = profileRouter;
