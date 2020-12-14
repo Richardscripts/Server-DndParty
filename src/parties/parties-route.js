@@ -21,6 +21,10 @@ partiesRouter
       online_or_not,
       homebrew_rules,
       time_of_event,
+      day,
+      month,
+      year,
+      date,
       classes_needed,
       group_personality,
       campaign_or_custom,
@@ -36,6 +40,10 @@ partiesRouter
       online_or_not,
       homebrew_rules,
       time_of_event,
+      day,
+      month,
+      year,
+      date,
       classes_needed,
       group_personality,
       campaign_or_custom,
@@ -46,6 +54,7 @@ partiesRouter
     if (!party_name) {
       return res.status(400).json({ error: 'Missing Required Fields' });
     }
+    console.log(newParty.time_of_event);
     PartiesService.getPartyName(req.app.get('db'), party_name).then(
       (result) => {
         if (result) {

@@ -33,6 +33,16 @@ const ProfileService = {
         return res;
       });
   },
+  updateCharacterSheets(db, user_id, character_sheets) {
+    return db('character_sheets')
+    .where({ user_id })
+    .update(userInfo)
+    .returning('*')
+    .then((res) => {
+      delete res[0].password;
+      return res;
+    });
+  },
   getUserCreatedTablesFromDB(db, id) {
     return db('parties')
       .select('*')
