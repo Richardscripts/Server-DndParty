@@ -67,7 +67,6 @@ partiesRouter
     PartiesService.getAllPartiesFromDB(req.app.get('db'))
       .then((result) => {
         result = convertTime(result, req.headers.timezone);
-
         return res.json(result.map(serializeData));
       })
       .catch(next);
