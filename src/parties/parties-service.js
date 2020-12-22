@@ -180,6 +180,9 @@ const PartiesService = {
         return res;
       });
   },
+  updateParty(db, partyUpdate, party_id) {
+    return db('parties').where({ party_id }).update(partyUpdate);
+  },
 };
 
 module.exports = PartiesService;

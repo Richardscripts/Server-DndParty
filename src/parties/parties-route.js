@@ -5,6 +5,7 @@ const serializeData = require('../serializeData/serializeData');
 const AuthService = require('../auth/auth-service');
 const { chatmessagesLimiter1 } = require('../middleware/rate-limiter');
 const { chatmessagesLimiter2 } = require('../middleware/rate-limiter');
+const convertTime = require('../convertTime/convertTime');
 
 const partiesRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -21,10 +22,7 @@ partiesRouter
       online_or_not,
       homebrew_rules,
       time_of_event,
-      day,
-      month,
-      year,
-      date,
+      date_object,
       classes_needed,
       group_personality,
       campaign_or_custom,
@@ -40,10 +38,7 @@ partiesRouter
       online_or_not,
       homebrew_rules,
       time_of_event,
-      day,
-      month,
-      year,
-      date,
+      date_object,
       classes_needed,
       group_personality,
       campaign_or_custom,
@@ -54,7 +49,6 @@ partiesRouter
     if (!party_name) {
       return res.status(400).json({ error: 'Missing Required Fields' });
     }
-    console.log(newParty.time_of_event);
     PartiesService.getPartyName(req.app.get('db'), party_name).then(
       (result) => {
         if (result) {
@@ -72,6 +66,8 @@ partiesRouter
   .get((req, res, next) => {
     PartiesService.getAllPartiesFromDB(req.app.get('db'))
       .then((result) => {
+        result = convertTime(result, req.headers.timezone);
+
         return res.json(result.map(serializeData));
       })
       .catch(next);
@@ -83,6 +79,7 @@ partiesRouter
     const party_id = req.params.party_id;
     PartiesService.getIndividualPartyFromDB(req.app.get('db'), party_id)
       .then((result) => {
+        result = convertTime(result, req.headers.timezone);
         return res.json(result.map(serializeData));
       })
       .catch(next);
@@ -91,7 +88,6 @@ partiesRouter
     const party_id = req.params.party_id;
     AuthService.getPartyCreator(req.app.get('db'), req.user.user_id, party_id)
       .then((result) => {
-        console.log(result);
         if (!result) {
           return res.status(401).json({ error: 'Unathorized User' });
         } else {
@@ -101,6 +97,46 @@ partiesRouter
             })
             .catch(next);
         }
+      })
+      .catch(next);
+  })
+  .patch(requireAuth, jsonBodyParser, (req, res, next) => {
+    let {
+      players_needed,
+      dnd_edition,
+      about,
+      language,
+      online_or_not,
+      homebrew_rules,
+      time_of_event,
+      classes_needed,
+      group_personality,
+      campaign_or_custom,
+      dm_needed,
+      camera_required,
+    } = req.body;
+    let partyUpdate = {
+      players_needed,
+      dnd_edition,
+      about,
+      language,
+      online_or_not,
+      homebrew_rules,
+      time_of_event,
+      classes_needed,
+      group_personality,
+      campaign_or_custom,
+      dm_needed,
+      camera_required,
+      user_id_creator: req.user.user_id,
+    };
+    PartiesService.updateParty(
+      req.app.get('db'),
+      partyUpdate,
+      req.params.party_id
+    )
+      .then(() => {
+        return res.status(204).end();
       })
       .catch(next);
   });

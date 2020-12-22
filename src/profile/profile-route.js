@@ -78,16 +78,4 @@ profileRouter
       .catch(next);
   });
 
-// profileRouter.post('/pdf', jsonBodyParser, async (req, res, next) => {
-//   // const pdf = req.body.filepath;
-//   let options = [
-//     'https://www.dndbeyond.com/sheet-pdfs/FartofSmith_40895787.pdf',
-//     true, //true = json format, false text format
-//   ];
-
-//   xpdf.extract(options, (file) => {
-//     console.log(file);
-//   });
-// });
-
 module.exports = profileRouter;
