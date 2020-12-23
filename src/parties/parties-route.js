@@ -18,6 +18,7 @@ partiesRouter
       players_needed,
       dnd_edition,
       about,
+      intro_text,
       language,
       online_or_not,
       homebrew_rules,
@@ -28,12 +29,14 @@ partiesRouter
       campaign_or_custom,
       dm_needed,
       camera_required,
+      platform,
     } = req.body;
     let newParty = {
       party_name,
       players_needed,
       dnd_edition,
       about,
+      intro_text,
       language,
       online_or_not,
       homebrew_rules,
@@ -44,6 +47,7 @@ partiesRouter
       campaign_or_custom,
       dm_needed,
       camera_required,
+      platform,
       user_id_creator: req.user.user_id,
     };
     if (!party_name) {
@@ -104,6 +108,7 @@ partiesRouter
       players_needed,
       dnd_edition,
       about,
+      intro_text,
       language,
       online_or_not,
       homebrew_rules,
@@ -113,11 +118,13 @@ partiesRouter
       campaign_or_custom,
       dm_needed,
       camera_required,
+      platform,
     } = req.body;
     let partyUpdate = {
       players_needed,
       dnd_edition,
       about,
+      intro_text,
       language,
       online_or_not,
       homebrew_rules,
@@ -127,6 +134,7 @@ partiesRouter
       campaign_or_custom,
       dm_needed,
       camera_required,
+      platform,
       user_id_creator: req.user.user_id,
     };
     PartiesService.updateParty(

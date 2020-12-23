@@ -49,6 +49,17 @@ profileRouter
         .status(400)
         .json({ error: 'Nickname must be atleast 1 Character' });
     }
+
+    let pdfCheck = character_sheets
+      .slice(character_sheets.length - 4, character_sheets.length)
+      .toLowerCase();
+
+    if (character_sheets && pdfCheck !== '.pdf') {
+      return res
+        .status(401)
+        .json({ error: 'Character Sheet URL must be a PDF file' });
+    }
+
     ProfileService.checkUsernameExists(req.app.get('db'), user_name)
       .then((result) => {
         if (
