@@ -23,7 +23,7 @@ app.use('/api/profile', profileRouter);
 app.use(function errorHandler(error, req, res, next) {
   let response;
   if (NODE_ENV === 'production') {
-    response = { error: 'Sorry, Server Error! Try refreshing.', test: error };
+    response = { error: 'Sorry, Server Error! Try refreshing.'  };
   } else {
     console.error(error);
     response = { error: error.message };

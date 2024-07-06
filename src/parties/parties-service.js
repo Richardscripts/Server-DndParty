@@ -36,7 +36,6 @@ const PartiesService = {
         "parties.party_complete" ,
         "parties.name" ,
         "parties.languages" ,
-        "parties.date_modified",
         "users.user_name"
     ])
       .join('users', function () {
