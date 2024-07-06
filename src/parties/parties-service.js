@@ -13,15 +13,37 @@ const PartiesService = {
   },
   getIndividualPartyFromDB(db, party_id) {
     return db('parties')
-      .select('*', 'users.user_name')
+      .select([
+        "parties.party_id" ,
+        "parties.party_name" ,
+        "parties.time_of_event" ,
+        "parties.date_object" ,
+        "parties.universal" ,
+        "parties.dnd_edition" ,
+        "parties.players_needed" ,
+        "parties.dm_needed" ,
+        "parties.homebrew_rules" ,
+        "parties.classes_needed" ,
+        "parties.group_personality" ,
+        "parties.online_or_not" ,
+        "parties.camera_required" ,
+        "parties.about" ,
+        "parties.intro_text" ,
+        "parties.campaign_or_custom" ,
+        "parties.platform" ,
+        "parties.date_created" ,
+        "parties.user_id_creator" ,
+        "parties.party_complete" ,
+        "parties.name" ,
+        "parties.languages" ,
+        "parties.date_modified",
+        "users.user_name"
+    ])
       .join('users', function () {
         this.on('parties.user_id_creator', '=', 'users.user_id');
       })
       .where({ 'parties.party_id': party_id })
       .then((res) => {
-        delete res[0].password;
-        delete res[0].user_email;
-        delete res[0].user_id;
         return res;
       });
   },
