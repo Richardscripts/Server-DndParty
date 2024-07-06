@@ -35,7 +35,7 @@ const PartiesService = {
         "parties.user_id_creator" ,
         "parties.party_complete" ,
         "parties.party_name" ,
-        "parties.languages" ,
+        "parties.language" ,
         "users.user_name"
     ])
       .join('users', function () {
