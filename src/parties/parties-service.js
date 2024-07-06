@@ -34,7 +34,7 @@ const PartiesService = {
         "parties.date_created" ,
         "parties.user_id_creator" ,
         "parties.party_complete" ,
-        "parties.name" ,
+        "parties.party_name" ,
         "parties.languages" ,
         "users.user_name"
     ])
